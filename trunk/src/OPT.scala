@@ -1,6 +1,6 @@
 package ox.app
 /**
-        \$Id: OPT.scala 7 2016-10-13 18:29:51Z sufrin $
+        \$Id$
         Systematic fuss-free invocation of the low-level 'ox.app.App'
         tools, using macros. See 'OptTest.scala' for an example.
         

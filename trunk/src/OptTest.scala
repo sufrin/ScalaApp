@@ -1,6 +1,6 @@
 import ox.app.OPT._
 /**
-        \$Id: OptTest.scala 5 2015-06-01 13:53:01Z sufrin $
+        \$Id$
         
         A simple example of command line parsing. 
         

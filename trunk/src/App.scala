@@ -1,7 +1,7 @@
 package ox.app
 
 /**
-        \$Id: App.scala 5 2015-06-01 13:53:01Z sufrin $
+        \$Id$
         {{{ @author: Bernard Sufrin
         }}}
         

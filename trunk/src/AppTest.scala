@@ -1,6 +1,6 @@
 import ox.app.App._
 /**
-        \$Id: AppTest.scala 5 2015-06-01 13:53:01Z sufrin $
+        \$Id$
         
         A simple example of command line parsing. This uses the low-level
         'ox.app.App' tools. A similar test program uses macros to make
