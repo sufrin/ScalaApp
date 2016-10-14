@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!-- 
-        $Id: build.xml 682 2015-01-16 14:51:18Z sufrin $ 
+        $Id$ 
 -->
 <project name="BuildApp"  default="jar">
   <target name="compile" depends="scalatasks" description="Compile the library">  
