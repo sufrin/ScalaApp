@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- 
+        $Id: build.xml 682 2015-01-16 14:51:18Z sufrin $ 
+-->
+<project name="BuildApp"  default="jar">
+  <target name="compile" depends="scalatasks" description="Compile the library">  
+    <mkdir dir="${build.dir}"/>
+    <scalac srcdir       = "${sources.dir}"
+            destdir      = "${build.dir}" 
+            deprecation  = "on"         
+            unchecked    = "on"  
+            addparams    = "-target:jvm-1.6 -feature -language:implicitConversions -language:postfixOps"
+            classpathref = "compile.classpath"
+            force        = "changed">
+            <include name="**/*.scala"/>    
+            <exclude name="**/*Test*.scala"/>
+    </scalac>
+  </target>
+  
+  <target name="jar" depends="compile" description="Make a jar containing the library">
+   <jar destfile = "${build.dir}/${proj}.jar"       
+        basedir  = "${build.dir}"      
+        includes = "**/*.class"
+        excludes = "**/*Test*.class"/>
+  </target>
+</project>

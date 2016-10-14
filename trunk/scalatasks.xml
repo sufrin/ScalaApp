@@ -1,4 +1,4 @@
-<project name="ScalaTasks">
+<project name="Scala Tasks">
 
    <!--
         This file is designed to be included in a build.xml
@@ -38,47 +38,15 @@
      </fileset>   
    </path>
   
-   <target name  ="scalatasks" unless="tasksdefined"
+   <target name="scalatasks" unless="scalatasks.defined"
            description="Define Scala compilation tasks and classpaths" > 
-           <property name="tasksdefined" value="true"/>         
+           <property name="scalatasks.defined" value="true"/>         
            <taskdef resource="scala/tools/ant/antlib.xml" classpathref="compile.classpath"/>       
-  </target>
-  
-  <macrodef name="makemain">
-     <!--       
-        Make a runnable jar file @{name} from all the compiled files in
-        ${build.dir} and with a class path that includes all the jar
-        files in the fileset ${runtime.classpath} (or that named 
-        by the classpathid paramater. 
-        
-        The name of the main class is @class}. 
-        
-          Example:             <makemain name="test.jar" class="Test1"/>        
-          To run this example: java -jar Test
-               
-        THIS IS NOT A RELIABLE WAY OF BUILDING A CLOSED AND TRANSPORTABLE
-        JAVA PROGRAM, FOR IT USES ABSOLUTE PATHS ON THE CURRENT HOST.
-     -->
-     <attribute name="name"/>                           <!-- Name of the program jar file -->
-     <attribute name="class"/>                          <!-- Name of the main class -->
-     <attribute name="classpathid" 
-                default="${runtime.classpath}"/>        <!-- Id of the runtime classpath -->
-     
-        <sequential>
-           <pathconvert property="jar.classpath" pathsep=" " refid="@{classpathid}"/>
-           <echo message="JAR CLASSPATH: ${jar.classpath}"/>
-           <jar destfile = "${build.dir}/@{name}"      
-                basedir  = "${build.dir}"      
-                includes = "**/*.class">
-                <manifest>
-                     <attribute name="Main-Class" value="@{class}"/>
-                     <attribute name="Class-Path" value="${jar.classpath}"/>
-                </manifest>
-           </jar>
-        </sequential> 
-  </macrodef>
+   </target>
   
 </project>
+
+
 
 
 

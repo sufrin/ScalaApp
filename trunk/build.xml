@@ -14,20 +14,8 @@
   <property name="local.jars"   value="." />                        <!-- jars on the compilation class path -->
                   
   <import file="${base.dir}/scalatasks.xml"/>  
+  <import file="${base.dir}/externalbuild.xml"/>  
     
-  <target name="compile" depends="scalatasks" description="Compile the library">  
-    <mkdir dir="${build.dir}"/>
-    <scalac srcdir       = "${sources.dir}"
-            destdir      = "${build.dir}" 
-            deprecation  = "on"         
-            unchecked    = "on"  
-            addparams    = "-target:jvm-1.6 -feature -language:implicitConversions -language:postfixOps"
-            classpathref = "compile.classpath"
-            force        = "changed">
-            <include name="**/*.scala"/>    
-            <exclude name="**/*Test*.scala"/>
-    </scalac>
-  </target>
   
   <target name="compiletest" depends="scalatasks,jar" description="Compile the tests">  
     <mkdir dir="${build.dir}"/>
@@ -76,12 +64,6 @@
     </scaladoc>
   </target>
    
-  <target name="jar" depends="compile" description="Make a jar containing the library">
-   <jar destfile = "${build.dir}/${proj}.jar"       
-        basedir  = "${build.dir}"      
-        includes = "**/*.class"
-        excludes = "**/*Test*.class"/>
-  </target>
     
   <target name="docjar" depends="jar,doc" description="Make a jar containing the library source and its documentation">
    <jar destfile = "${base.dir}/${proj}doc.jar" basedir="${base.dir}" includes="doc/**/*,src/**/*.scala"/>     
@@ -98,6 +80,7 @@
   
   
 </project>
+
 
 
 
