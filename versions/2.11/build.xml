@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<!-- 
+        $Id: build.xml 682 2015-01-16 14:51:18Z sufrin $ 
+-->
+<project name="App"  default="jar">
+
+  <property name="proj"         value="App"                 />                
+  <property name="base.dir"     value="."                 />                
+  <property name="sources.dir"  value="${base.dir}/src"   />  
+  <property name="build.dir"    value="${base.dir}/BUILD" />  
+  <property name="doc.dir"      value="${base.dir}/doc"   />  
+  <property name="scala.home"   value="${user.home}/Scala" />
+  <property name="scala.local"  value="${user.home}/ScalaLocal" />  <!-- additional ant resources for scala -->
+  <property name="local.jars"   value="." />                        <!-- jars on the compilation class path -->
+                  
+  <import file="${base.dir}/scalatasks.xml"/>  
+    
+  <target name="compile" depends="scalatasks" description="Compile the library">  
+    <mkdir dir="${build.dir}"/>
+    <scalac srcdir       = "${sources.dir}"
+            destdir      = "${build.dir}" 
+            deprecation  = "on"         
+            unchecked    = "on"  
+            addparams    = "-target:jvm-1.6 -feature -language:implicitConversions -language:postfixOps"
+            classpathref = "compile.classpath"
+            force        = "changed">
+            <include name="**/*.scala"/>    
+            <exclude name="**/*Test*.scala"/>
+    </scalac>
+  </target>
+  
+  <target name="compiletest" depends="scalatasks,jar" description="Compile the tests">  
+    <mkdir dir="${build.dir}"/>
+    <fsc    srcdir       = "${sources.dir}"
+            destdir      = "${build.dir}" 
+            deprecation  = "on"         
+            unchecked    = "on"  
+            addparams    = "-target:jvm-1.6 -feature -language:implicitConversions -language:postfixOps"
+            classpathref = "compile.classpath"
+            force        = "changed">
+            <include name="**/*Test*.scala"/>    
+    </fsc>
+  </target>
+  
+  <target name="test" depends="compiletest" description="Run some tests">  
+    <exec  executable="xso">
+      <arg value="OptTest"/>
+      <arg value="-help"/>
+    </exec>
+    <exec  executable="xso">
+      <arg value="OptTest"/>
+      <arg value="-d"/>
+    </exec>
+    <exec  executable="xso">
+      <arg value="OptTest"/>
+      <arg line="a b c -f foo/bar -k 23 -r 3.141599999 more paths"/>
+    </exec>
+    <exec  executable="xso">
+      <arg value="OptTest"/>
+      <arg line="a b c -f foo/bar -k 23 -r 3.141599999 more -paths xyzzy"/>
+    </exec>
+  </target>
+  
+  <target name="doc" depends="scalatasks" description="Document the library">  
+    <mkdir dir="${doc.dir}"/>
+    <scaladoc
+            srcdir       = "${sources.dir}"
+            destdir      = "${doc.dir}"          
+            classpathref = "compile.classpath"
+            doctitle     = "Command-line Parsing"
+            addparams    = "-Ymacro-no-expand -feature -language:implicitConversions -language:postfixOps"
+            unchecked    = "on"
+            >
+            <include name="**/*.scala"/>
+            <exclude name="**/*Test*.scala"/>
+    </scaladoc>
+  </target>
+   
+  <target name="jar" depends="compile" description="Make a jar containing the library">
+   <jar destfile = "${build.dir}/${proj}.jar"       
+        basedir  = "${build.dir}"      
+        includes = "**/*.class"
+        excludes = "**/*Test*.class"/>
+  </target>
+    
+  <target name="docjar" depends="jar,doc" description="Make a jar containing the library source and its documentation">
+   <jar destfile = "${base.dir}/${proj}doc.jar" basedir="${base.dir}" includes="doc/**/*,src/**/*.scala"/>     
+  </target>
+  
+  <target name="src" depends="jar" description="Make a jar containing the library source">
+   <jar destfile = "${base.dir}/${proj}-src.jar" basedir="${base.dir}" includes="src/**/*.scala,*.xml"/>     
+  </target>
+  
+
+  <target name="clean" description="Remove all files from ${build.dir}">
+     <delete dir="${build.dir}"/>
+  </target>
+  
+  
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
