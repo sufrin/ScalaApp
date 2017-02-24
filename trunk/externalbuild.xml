@@ -1,14 +1,48 @@
 <?xml version="1.0"?>
 <!-- 
         $Id$ 
+        
+        Used to build a jar as part of a HOST build. For
+        example, from in the cso build file, the app task
+        is:
+
+        <target name="app" description="Compile the APP interface">
+          <ant dir="APP"
+               antfile="externalbuild.xml"
+               inheritall="false"
+               target="jar">
+            <property  name="base.dir"  value="."/>              <!-- local to APP />
+            <property  name="jar.dir"   value="${publish.dir}"/> <!-- put the jar in publish location />
+            <reference refid="compile.classpath"/>               <!-- inherit the compilation class path />
+          </ant>
+        </target>
+        
 -->
 <project name="BuildApp"  default="jar">
   <property file="scala.properties"/>
   <property file="build.properties"/>
-  <echo message="VERSION=${VERSION}, SCALAVERSION=${SCALAVERSION}"/>
+  <property name="sources.dir" value="${base.dir}/src/"/>
+  <property name="build.dir"   value="${base.dir}/BUILD/"/>
+  <property name="library.jar" value="${jar.dir}/${LIBRARY}-${VERSION}-${SCALAVERSION}.jar"/>
+  
+  <echo message="${LIBRARY} VERSION=${VERSION}, SCALAVERSION=${SCALAVERSION}"/>
+  <echo message="${LIBRARY} ${jar.dir} ${build.dir} ${sources.dir}"/>
+  
+  <uptodate property="compile.notrequired" targetfile="${library.jar}">
+     <srcfiles dir="${sources.dir}" includes="**/*.scala"/>
+  </uptodate>
 
-  <target name="compile" depends="scalatasks" description="Compile the library">  
+   <target name="scalatasks" unless="scalatasks.defined"
+           description="Define standard Scala compilation tasks" >
+           <property name="scalatasks.defined" value="true"/>
+           <taskdef resource="scala/tools/ant/antlib.xml" classpathref="compile.classpath"/>
+   </target>
+   
+  <target name="prepare">
     <mkdir dir="${build.dir}"/>
+  </target>
+  
+  <target name="compile" depends="scalatasks,prepare" description="Compile the library" unless="${compile.notrequired}">  
     <scalac srcdir       = "${sources.dir}"
             destdir      = "${build.dir}" 
             deprecation  = "on"         
@@ -22,11 +56,12 @@
   </target>
   
   <target name="jar" depends="compile" description="Make a jar containing the library">
-   <jar destfile = "${build.dir}/${proj}-${VERSION}-${SCALAVERSION}.jar"       
+   <jar destfile = "${library.jar}"       
         basedir  = "${build.dir}"      
         includes = "**/*.class"
         excludes = "**/*Test*.class"/>
   </target>
 
 </project>
+
 
