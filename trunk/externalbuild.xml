@@ -11,9 +11,9 @@
                antfile="externalbuild.xml"
                inheritall="false"
                target="jar">
-            <property  name="base.dir"  value="."/>              <!-- local to APP />
-            <property  name="jar.dir"   value="${publish.dir}"/> <!-- put the jar in publish location />
-            <reference refid="compile.classpath"/>               <!-- inherit the compilation class path />
+            <property  name="base.dir"  value="."/>              
+            <property  name="jar.dir"   value="${publish.dir}"/> 
+            <reference refid="compile.classpath"/>               
           </ant>
         </target>
         
@@ -63,5 +63,6 @@
   </target>
 
 </project>
+
 
 
