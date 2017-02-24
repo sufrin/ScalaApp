@@ -33,25 +33,26 @@ object OptTest extends App
   var env  = new Env()
   var jobs = new Queue[(Env, String)]
   val Options = List (
-     OPT("-help",  { Usage },                    "prints usage text")
-   , OPT("-d",     { Console.println(Env()) },   "prints initial options")
-   , OPT("-f",     env.f ,      "<path> sets f to <path>") 
-   , OPT("-g",     env.g ,      "inverts g")
-   , OPT("-h",     env.h ,      "inverts h")
-   , OPT("-i",     env.i ,      "inverts i")
-   , OPT("-k",     env.k ,      "<int> sets k")
-   , OPT("-r",     env.r,       "<real> sets r")
-   , ELSE("<path>",   { f => jobs.enqueue((env.copy(), f)) }, 
-                        "adds a path to the list to be processed")
-   , REST("--", { case args => for (f <- args) jobs.enqueue((env, f)) }, 
+     OPT("-help",  { Usage },                    "prints usage text")           ,
+     OPT("-d",     { Console.println(Env()) },   "prints initial options")      ,
+     OPT("-f",     env.f ,      "<path> sets f to <path>")                      ,
+     OPT("-g",     env.g ,      "inverts g")                                    ,
+     OPT("-h",     env.h ,      "inverts h")                                    ,
+     OPT("-i",     env.i ,      "inverts i")                                    ,
+     OPT("-k",     env.k ,      "<int> sets k")                                 ,
+     OPT("-r",     env.r,       "<real> sets r")                                ,
+     ELSE("<path>",   { f => jobs.enqueue((env.copy(), f)) }, 
+                        "adds a path to the list to be processed")              ,
+     REST("--", { case args => for (f <- args) jobs.enqueue((env, f)) }, 
                 "interprets all subsequent arguments as paths")
-   )
+     )
    val Command = "OptTest"
    
    def Main = 
        for ((env, path) <- jobs) Console.println(s"${path} in ${env}") 
      
 }
+
 
 
 

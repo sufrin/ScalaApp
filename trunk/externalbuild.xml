@@ -3,13 +3,17 @@
         $Id$ 
 -->
 <project name="BuildApp"  default="jar">
+  <property file="scala.properties"/>
+  <property file="build.properties"/>
+  <echo message="VERSION=${VERSION}, SCALAVERSION=${SCALAVERSION}"/>
+
   <target name="compile" depends="scalatasks" description="Compile the library">  
     <mkdir dir="${build.dir}"/>
     <scalac srcdir       = "${sources.dir}"
             destdir      = "${build.dir}" 
             deprecation  = "on"         
             unchecked    = "on"  
-            addparams    = "-target:jvm-1.6 -feature -language:implicitConversions -language:postfixOps"
+            addparams    = "-feature -language:implicitConversions -language:postfixOps"
             classpathref = "compile.classpath"
             force        = "changed">
             <include name="**/*.scala"/>    
@@ -18,9 +22,11 @@
   </target>
   
   <target name="jar" depends="compile" description="Make a jar containing the library">
-   <jar destfile = "${build.dir}/${proj}.jar"       
+   <jar destfile = "${build.dir}/${proj}-${VERSION}-${SCALAVERSION}.jar"       
         basedir  = "${build.dir}"      
         includes = "**/*.class"
         excludes = "**/*Test*.class"/>
   </target>
+
 </project>
+

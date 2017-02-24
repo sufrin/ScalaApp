@@ -1,8 +1,9 @@
 package ox.app
 /**
         \$Id$
-        Systematic fuss-free invocation of the low-level 'ox.app.App'
-        tools, using macros. See 'OptTest.scala' for an example.
+        
+        Type-directed invocation of the low-level 'ox.app.App'
+        functions, using macros. 
         
         In the following example our model for processing is
         that every path is processed in an environment: a
@@ -17,6 +18,7 @@ package ox.app
         paths have all been parsed -- but not before. An
         error in parsing causes the program to exit
         '''before any semantic processing has been done.'''
+        
 {{{
 object OptTest extends App
 { 
@@ -134,6 +136,7 @@ object OPT
    
        
 }
+
 
 
 

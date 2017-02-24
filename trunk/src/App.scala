@@ -201,8 +201,6 @@ abstract class Opt(_pat: String, _help: Seq[String])
   def Allow(arg: String, pat: String) =
      if (!arg.matches(pat)) throw new OptFail 
   
-  def ++(opts: List[Opt]) = this :: opts
-  
 }
 
 /**
@@ -337,6 +335,7 @@ class OptFail extends Exception {}
    def Rest(_pat: String, effect: List[String] => Unit, _help: String*) = 
            new Rest(_pat, effect, _help)
 }
+
 
 
 
