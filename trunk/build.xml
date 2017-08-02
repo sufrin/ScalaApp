@@ -10,6 +10,7 @@
   <property name="proj"         value="${LIBRARY}"        />                
   <property name="base.dir"     value="."                 />                
   <property name="sources.dir"  value="${base.dir}/src"   />  
+  <property name="tests.dir"    value="${base.dir}/test"   />  
   <property name="build.dir"    value="${base.dir}/BUILD" />  
   <property name="doc.dir"      value="${base.dir}/doc"   />  
   <property name="scala.home"   value="${SCALAPATH}" />
@@ -36,7 +37,7 @@
   
   <target name="compiletest" depends="scalatasks,jar" description="Compile the tests">  
     <mkdir dir="${build.dir}"/>
-    <fsc    srcdir       = "${sources.dir}"
+    <fsc    srcdir       = "${tests.dir}"
             destdir      = "${build.dir}" 
             deprecation  = "on"         
             unchecked    = "on"  
@@ -103,6 +104,7 @@
   
   
 </project>
+
 
 
 
