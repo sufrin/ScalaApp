@@ -143,7 +143,8 @@ abstract class App
   
   def Usage =
   { Console.err.println("Usage: %s [args] -- where an [arg] is one of:".format(Command))
-    for (cmd<-Options) Console.err.println(s"%${flagLength}s %s".format(cmd.flag, cmd.help))   
+    //noinspection ScalaMalformedFormatString
+    for (cmd<- Options) Console.err.println(s"%${flagLength}s %s".format(cmd.flag, cmd.help))
   }
   
 }
