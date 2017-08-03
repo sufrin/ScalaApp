@@ -48,7 +48,7 @@ abstract class App
 
   val Options:  List[Opt]
   val Command:  String
-  def Main:     Unit
+  def Main():     Unit
   
   /**
     Entry point to an `App` run from the command line: 
@@ -67,9 +67,9 @@ abstract class App
   */
   def main(args: List[String]):  Unit = 
   { var remaining = args
-    while (!remaining.isEmpty)
+    while (remaining.nonEmpty)
     { val arg = remaining.head
-      Options.find({ case cmd => arg.matches(cmd.pat)}) match
+      Options.find((cmd => arg.matches(cmd.pat))) match
       { case Some(cmd: Opt) => 
           if (cmd.arity<0)
           {
@@ -86,7 +86,7 @@ abstract class App
           {
              NotEnough(cmd, args); Fail
           }
-        case None      => { Invalid(arg, args); Fail }
+        case None      => Invalid(arg, args); Fail
       }
     }
   }
@@ -94,7 +94,7 @@ abstract class App
   /** Invoked after an error in the command-line arguments has been
       reported. 
   */
-  def Fail = System.exit(2)
+  def Fail(): Unit = System.exit(2)
   
   /**
       An argument sequence (`local`) that appears to satisfy the
@@ -102,10 +102,10 @@ abstract class App
       usually because a subsidiary or subsequent argument 
       fails to match a constraint. A report is made.
   */
-  def Unacceptable(cmd: Opt, local: List[String], args: List[String]) =
+  def Unacceptable(cmd: Opt, local: List[String], args: List[String]): Unit =
   { Console.err.print("%s ".format(Command))
     for (arg<-args) Console.err.print("%s ".format(arg))
-    Console.err.println
+    Console.err.println()
     var l = ""
     for (arg<-local) l = l+arg+" "
     Console.err.println("Invalid argument(s) %s(%s %s)".format(l, cmd.flag, cmd.help))
@@ -116,10 +116,10 @@ abstract class App
       `cmd` option pattern cannot actually be parsed --
       usually because there aren't enough arguments available.
   */  
-  def NotEnough(cmd: Opt, args: List[String]) =
+  def NotEnough(cmd: Opt, args: List[String]): Unit =
   { Console.err.print("%s ".format(Command))
     for (arg<-args) Console.err.print("%s ".format(arg))
-    Console.err.println
+    Console.err.println()
     Console.err.println("Not enough arguments for: %s %s".format(cmd.flag, cmd.help))
   }
   
@@ -127,11 +127,11 @@ abstract class App
     No candidate option pattern can be found that matches the 
     (head of) the given argument sequence.
   */
-  def Invalid(arg: String, args: List[String]) =
+  def Invalid(arg: String, args: List[String]): Unit =
   { Console.err.println("Invalid: "+arg)
     Console.err.print("%s ".format(Command))
     for (arg<-args) Console.err.print("%s ".format(arg))
-    Console.err.println
+    Console.err.println()
     Usage 
   }
   
@@ -141,7 +141,7 @@ abstract class App
     v
   }
   
-  def Usage =
+  def Usage(): Unit =
   { Console.err.println("Usage: %s [args] -- where an [arg] is one of:".format(Command))
     //noinspection ScalaMalformedFormatString
     for (cmd<- Options) Console.err.println(s"%${flagLength}s %s".format(cmd.flag, cmd.help))
@@ -175,12 +175,12 @@ abstract class Opt(_pat: String, _help: Seq[String])
     then the rest of the pattern is taken literally, otherwise
     the pattern is in the `java.util.regex.Pattern` notation.
   */  
-  val pat    = if (litPat) App.Quote(_pat.substring(1)) else _pat
+  val pat: String = if (litPat) App.Quote(_pat.substring(1)) else _pat
   
   /* The help string to be used by the standard `Usage` and
      error-message methods if this option is used erroneously.
   */
-  lazy val help = _help.length match
+  lazy val help: String = _help.length match
                   { case 0 => ""
                     case 1 => _help.head
                     case 2 => _help.head
@@ -190,7 +190,7 @@ abstract class Opt(_pat: String, _help: Seq[String])
      error-message methods. The same as `pat` unless `pat` is
      to be taken literally because `_pat` started with a (').
   */
-  lazy val flag = _help.length match
+  lazy val flag: String = _help.length match
                   { case 0 => if (litPat) _pat.substring(1) else pat
                     case 1 => if (litPat) _pat.substring(1) else pat
                     case 2 => _help.last
@@ -199,7 +199,7 @@ abstract class Opt(_pat: String, _help: Seq[String])
         Throws an `OptFail` exception to the option parser if
         `arg` doesn't match `pat`. 
   */                
-  def Allow(arg: String, pat: String) =
+  def Allow(arg: String, pat: String): Unit =
      if (!arg.matches(pat)) throw new OptFail 
   
 }
@@ -209,7 +209,7 @@ abstract class Opt(_pat: String, _help: Seq[String])
 */
 class Flag(_pat: String, effect: => Unit, _help: Seq[String]) extends Opt(_pat, _help) {
      val arity = 1
-     val meaning: List[String]=>Unit = { case _ :: _ => effect; case Nil => {} }
+     val meaning: List[String]=>Unit = { case _ :: _ => effect; case Nil =>}
 }
 
 /**
@@ -218,8 +218,8 @@ class Flag(_pat: String, effect: => Unit, _help: Seq[String]) extends Opt(_pat, 
 class Arg(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity= 2
      val meaning: List[String]=>Unit = { case _ :: arg :: _ => effect(arg)
-                                         case _ => {} 
-                                       }
+                                         case _ =>
+     }
 }
 
 /**
@@ -229,8 +229,8 @@ class Arg(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(
 class PathArg(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity= 2
      val meaning: List[String]=>Unit = 
-     { case _ :: arg :: _ => { Allow(arg, "[^-].*"); effect(arg) }
-       case _ => {}
+     { case _ :: arg :: _ => Allow(arg, "[^-].*"); effect(arg)
+     case _ =>
      }
 }
 
@@ -241,8 +241,8 @@ class PathArg(_pat: String, effect: String => Unit, _help: Seq[String]) extends 
 class Int32(_pat: String, effect: Int => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity= 2
      val meaning: List[String]=>Unit = 
-         { case _ :: arg :: _ => { Allow(arg, "-?[0-9]+"); effect(arg.toInt) }
-           case _ => {}
+         { case _ :: arg :: _ => Allow(arg, "-?[0-9]+"); effect(arg.toInt)
+         case _ =>
          }
 }
 
@@ -255,8 +255,8 @@ class Int32(_pat: String, effect: Int => Unit, _help: Seq[String]) extends Opt(_
 class Real(_pat: String, effect: Double => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity= 2
      val meaning: List[String]=>Unit = 
-         { case _ :: arg :: _ => { Allow(arg, "-?([0-9]+)?([.][0-9]+)?([Ee]-?[0-9]+)?"); effect(arg.toDouble) }
-           case _ => {}
+         { case _ :: arg :: _ => Allow(arg, "-?([0-9]+)?([.][0-9]+)?([Ee]-?[0-9]+)?"); effect(arg.toDouble)
+         case _ =>
          }
 }
 
@@ -267,8 +267,8 @@ class Real(_pat: String, effect: Double => Unit, _help: Seq[String]) extends Opt
 class Int64(_pat: String, effect: Long => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity = 2
      val meaning: List[String]=>Unit = 
-         { case _ :: arg :: _ => { Allow(arg, "(-?[0-9]+)"); effect(arg.toLong) } 
-           case _ => {}
+         { case _ :: arg :: _ => Allow(arg, "(-?[0-9]+)"); effect(arg.toLong)
+         case _ =>
          }
 }
 
@@ -279,8 +279,8 @@ class Int64(_pat: String, effect: Long => Unit, _help: Seq[String]) extends Opt(
 class Path(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity = 1
      val meaning: List[String]=>Unit = 
-         { case arg :: _ => { Allow(arg, "[^-].*"); effect(arg) }
-           case _ => {}
+         { case arg :: _ => Allow(arg, "[^-].*"); effect(arg)
+         case _ =>
          }
 }
 
@@ -291,8 +291,8 @@ class Path(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt
 class Lit(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
      val arity = 1
      val meaning: List[String]=>Unit = 
-         { case arg :: _ => { effect(arg) }
-           case _ => {}
+         { case arg :: _ => effect(arg)
+         case _ =>
          }
 }
 
@@ -301,8 +301,8 @@ class Lit(_pat: String, effect: String => Unit, _help: Seq[String]) extends Opt(
         passed, as a list, to `effect`.
 */
 class Rest(_pat: String, effect: List[String] => Unit, _help: Seq[String]) extends Opt(_pat,_help) {
-     val arity = -1
-     val meaning: List[String]=>Unit = { case args => effect(args.tail) }
+     val arity: Int = -1
+     val meaning: List[String]=>Unit = (args => effect(args.tail))
 }
 
 class OptFail extends Exception {}

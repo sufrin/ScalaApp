@@ -1,61 +1,64 @@
 package ox.app
+
+import scala.reflect.macros.blackbox
+
 /**
-        \$Id$
-        
-        Type-directed invocation of the low-level 'ox.app.App'
-        functions, using macros. 
-        
-        In the following example our model for processing is
-        that every path is processed in an environment: a
-        pair `(Env, Path)` is called a `Job`.
-
-        The environment is accumulated from the options
-        given on the command line; and whenever a new path
-        is added, the currently-prevailing environment is
-        added to the `Job` queue.
-
-        The `Job` queue is available when the options and
-        paths have all been parsed -- but not before. An
-        error in parsing causes the program to exit
-        '''before any semantic processing has been done.'''
-        
-{{{
-object OptTest extends App
-{ 
-  import scala.collection.mutable.Queue
-  case class Env (
-   var f: String  = "Undefined",
-   var g: Boolean = false,
-   var h: Boolean = false,
-   var i: Boolean = true,
-   var k: Int     = 45,
-   var r: Double  = 3.1415
-  ) {
-    override def toString = s"f=\$f, g=\$g, h=\$h, i=\$i, k=\$k, r=\$r"
-  }
-  
-  var env  = new Env()
-  var jobs = new Queue[(Env, String)]
-  val Options = List (
-     OPT("-help",  { Usage },                    "prints usage text")
-   , OPT("-d",     { Console.println(Env()) },   "prints initial options")
-   , OPT("-f",     env.f ,      "<path> sets f to <path>") 
-   , OPT("-g",     env.g ,      "inverts g")
-   , OPT("-h",     env.h ,      "inverts h")
-   , OPT("-i",     env.i ,      "inverts i")
-   , OPT("-k",     env.k ,      "<int> sets k")
-   , OPT("-r",     env.r,       "<real> sets r")
-   , ELSE("<path>",   { f => jobs.enqueue((env.copy(), f)) }, 
-                        "adds a path to the list to be processed")
-   , REST("--", { case args => for (f <- args) jobs.enqueue((env, f)) }, 
-                "interprets all subsequent arguments as paths")
-   )
-   val Command = "OptTest"
-   
-   def Main = 
-       for ((env, path) <- jobs) Console.println(s"\${path} in \${env}")     
-}
-}}}
+  *\$Id$
+ **
+ Type-directed invocation of the low-level 'ox.app.App'
+        *functions, using macros.
+ **
+ In the following example our model for processing is
+        *that every path is processed in an environment: a
+        *pair `(Env, Path)` is called a `Job`.
+ **
+ The environment is accumulated from the options
+        *given on the command line; and whenever a new path
+        *is added, the currently-prevailing environment is
+        *added to the `Job` queue.
+ **
+ The `Job` queue is available when the options and
+        *paths have all been parsed -- but not before. An
+        *error in parsing causes the program to exit
+        *'''before any semantic processing has been done.'''
+ **
+ {{{
+*object OptTest extends App
+*{
+  *import scala.collection.mutable.Queue
+  *case class Env (
+   *var f: String  = "Undefined",
+   *var g: Boolean = false,
+   *var h: Boolean = false,
+   *var i: Boolean = true,
+   *var k: Int     = 45,
+   *var r: Double  = 3.1415
+  *) {
+    *override def toString = s"f=\$f, g=\$g, h=\$h, i=\$i, k=\$k, r=\$r"
+  *}
+ **
+ var env  = new Env()
+  *var jobs = new Queue[(Env, String)]
+  *val Options = List (
+     *OPT("-help",  { Usage },                    "prints usage text")
+   *, OPT("-d",     { Console.println(Env()) },   "prints initial options")
+   *, OPT("-f",     env.f ,      "<path> sets f to <path>")
+   *, OPT("-g",     env.g ,      "inverts g")
+   *, OPT("-h",     env.h ,      "inverts h")
+   *, OPT("-i",     env.i ,      "inverts i")
+   *, OPT("-k",     env.k ,      "<int> sets k")
+   *, OPT("-r",     env.r,       "<real> sets r")
+   *, ELSE("<path>",   { f => jobs.enqueue((env.copy(), f)) },
+                        *"adds a path to the list to be processed")
+   *, REST("--", { case args => for (f <- args) jobs.enqueue((env, f)) },
+                *"interprets all subsequent arguments as paths")
+   *)
+   *val Command = "OptTest"
+ **
+ def Main =
+       *for ((env, path) <- jobs) Console.println(s"\${path} in \${env}")
+*}
+*}}}
 */
 object OPT 
 {  type App = ox.app.App
@@ -65,14 +68,14 @@ object OPT
    
    /** An option that matches 'tag' inverts the value of 'flag' */
    def OPT(tag: String, flag: Boolean, help: String): Opt = macro BoolInv
-   def BoolInv(c: Context)(tag: c.Tree, flag: c.Tree, help: c.Tree) = 
+   def BoolInv(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Flag($tag, { $flag = ! $flag }, $help)"
       } 
    
    /** An option that matches 'tag' sets the value of 'flag' to 'value' */
    def OPT(tag: String, flag: Boolean, value: Boolean, help: String): Opt = macro BoolArg
-   def BoolArg(c: Context)(tag: c.Tree, flag: c.Tree, value: c.Tree, help: c.Tree) = 
+   def BoolArg(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, value: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Flag($tag, { $flag = $value }, $help)"
       } 
@@ -83,28 +86,28 @@ object OPT
    
    /** An option that matches 'tag' sets 'flag' to the next argument */
    def OPT(tag: String, flag: String, help: String): Opt = macro StringArg
-   def StringArg(c: Context)(tag: c.Tree, flag: c.Tree, help: c.Tree) = 
+   def StringArg(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Arg($tag, { case arg => $flag=arg }, $help)"
       } 
       
    /** An option that matches 'tag' sets 'flag' to the next argument.'toInt'*/
    def OPT(tag: String, flag: Int, help: String): Opt = macro IntArg
-   def IntArg(c: Context)(tag: c.Tree, flag: c.Tree, help: c.Tree) = 
+   def IntArg(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Int32($tag, { case arg => $flag=arg }, $help)"
       }
        
    /** An option that matches 'tag' sets 'flag' to the next argument.toLong */
    def OPT(tag: String, flag: Long, help: String): Opt = macro LongArg
-   def LongArg(c: Context)(tag: c.Tree, flag: c.Tree, help: c.Tree) = 
+   def LongArg(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Int64($tag, { case arg => $flag=arg }, $help)"
       } 
       
    /** An option that matches 'tag' sets 'flag' to the next argument.toDouble */   
    def OPT(tag: String, flag: Double, help: String): Opt = macro DoubleArg
-   def DoubleArg(c: Context)(tag: c.Tree, flag: c.Tree, help: c.Tree) = 
+   def DoubleArg(c: blackbox.Context)(tag: c.Tree, flag: c.Tree, help: c.Tree): c.universe.Tree =
       { import c.universe._
         q"ox.app.App.Real($tag, { case arg => $flag=arg }, $help)"
       } 
