@@ -21,7 +21,7 @@ import scala.collection.mutable
 //noinspection VarCouldBeVal,VarCouldBeVal
 object OptTest extends App {
 
-  import scala.collection.mutable.Queue
+  import collection.mutable.Queue
   case class Env (
    var f: String  = "Undefined",
    var g: Boolean = false,
