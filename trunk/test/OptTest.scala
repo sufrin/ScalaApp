@@ -3,20 +3,20 @@ import ox.app.OPT._
 import scala.collection.mutable
 /**
   * \$Id$
-  **
-  *A simple example of command line parsing.
-  **
-  *Our model for processing is that every path is processed in an
-  *environment: a pair (Env, Path) is called a Job.
-  **
-  *The environment is accumulated from the options
-  *given on the command line; and whenever a new path is added,
-  *the currently-prevailing environment is added to the Job queue.
-  **
- *The Job queue is available when the options and paths
-  *have all been parsed -- but not before. An error in
-  *parsing causes the program to exit '''before any semantic processing
-  *has been done.'''
+  *
+  * A simple example of command line parsing.
+  *
+  * Our model for processing is that every path is processed in an
+  * environment: a pair (Env, Path) is called a Job.
+  *
+  * The environment is accumulated from the options
+  * given on the command line; and whenever a new path is added,
+  * the currently-prevailing environment is added to the Job queue.
+  *
+  * The Job queue is available when the options and paths
+  * have all been parsed -- but not before. An error in
+  * parsing causes the program to exit '''before any semantic processing
+  * has been done.'''
   */
 //noinspection VarCouldBeVal,VarCouldBeVal
 object OptTest extends App {
