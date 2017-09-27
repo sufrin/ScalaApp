@@ -173,7 +173,7 @@ abstract class Opt(_pat: String, _help: Seq[String])
     The pattern that is matched against the starting argument
     of a sequence. If `_pat` started with a single quote mark ('),
     then the rest of the pattern is taken literally, otherwise
-    the pattern is in the `java.util.regex.Pattern` notation.
+    the pattern is in the `jdk.util.regex.Pattern` notation.
   */  
   val pat: String = if (litPat) App.Quote(_pat.substring(1)) else _pat
   
