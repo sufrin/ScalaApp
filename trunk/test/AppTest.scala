@@ -2,23 +2,23 @@ import ox.app.App._
 
 import scala.collection.mutable
 /**
-  * \$Id$
-  **
-  *A simple example of command line parsing. This uses the low-level
-  *'ox.app.App' tools. A similar test program uses macros to make
-  *invocations of the low-level tools more concise.
-  **
-  *Our model for processing is that every path is processed in an
-  *environment: a pair (Env, Path) is called a Job.
-  **
-  *The environment is accumulated from the options
-  *given on the command line; and whenever a new path is added,
-  *the currently-prevailing environment is added to the Job queue.
-  **
- *The Job queue is available when the options and paths
-  *have all been parsed -- but not before. An error in
-  *parsing causes the program to exit '''before any semantic processing
-  *has been done.'''
+   <p> {{{\$Id$}}}
+
+   A simple example of command line parsing. This uses the low-level
+   'ox.app.App' tools. A similar test program uses macros to make
+   invocations of the low-level tools more concise.
+
+   Our model for processing is that every path is processed in an
+   environment: a pair (Env, Path) is called a Job.
+
+   The environment is accumulated from the options
+   given on the command line; and whenever a new path is added,
+   the currently-prevailing environment is added to the Job queue.
+
+  The Job queue is available when the options and paths
+   have all been parsed -- but not before. An error in
+   parsing causes the program to exit '''before any semantic processing
+   has been done.'''
   */
 //noinspection VarCouldBeVal,VarCouldBeVal
 object AppTest extends App {
@@ -48,7 +48,7 @@ object AppTest extends App {
    , Flag("'+i",      { env.i = false},     "clears i")
    , Int32("-k",      { arg => env.k=arg }, "<int> sets k")
    , Real("-r", { _ => env.r }, "<real> sets r")
-   , Path("[^-].*",   { f => jobs.enqueue((env.copy(), f)) }, 
+   , Path("[^-]. ",   { f => jobs.enqueue((env.copy(), f)) },
                                "adds a path to the list to be processed",
                                "<path>")
    , Rest("--", (args =>

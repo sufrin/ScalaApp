@@ -1,9 +1,8 @@
 package ox.app
 
 /**
-        \$Id$
-        {{{ @author: Bernard Sufrin
-        }}}
+        <p>
+        {{{ \$Id$ }}}
         
         An `App` is the core of a command-line application.  Its
         `Options` must be declared as a list of the `Opt`s that it
@@ -32,13 +31,13 @@ package ox.app
         meaning function. Then `arity` arguments are removed from
         the list, and the parsing continues. The parsing stops when
         there are no arguments left (or when a parsing error occurs).        
-        
+
+        <p>
         See `AppTest.scala` for a simple and effective way of
         using this package to accumulate a queue of jobs to
         be performed by the program (and environments in which
-        the jobs are to be performed).
-        
-        The Job queue is available when the options and paths
+        the jobs are to be performed). There
+        the Job queue is available when the options and paths
         have all been parsed -- but not before. An error in
         parsing causes the program to exit '''before any semantic processing
         has been done.'''
