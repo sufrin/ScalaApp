@@ -39,7 +39,7 @@ package ox.app
         an additional argument.
 
         <p>
-        See `AppTest.scala` for a simple and effective way of
+        See below for a simple and effective way of
         using this package to accumulate a queue of jobs to
         be performed by the program (and environments in which
         the jobs are to be performed). There
@@ -47,7 +47,50 @@ package ox.app
         have all been parsed -- but not before. An error in
         parsing causes the program to exit '''before any semantic processing
         has been done.'''
-*/
+{{{
+  object AppTest extends App {
+
+  import scala.collection.mutable.Queue
+  case class Env
+  (
+   var f: String,
+   var g: Boolean,
+   var h: Boolean,
+   var i: Boolean,
+   var k: Int,
+   var r: Double
+  )
+  {
+   override def toString = s"(f=$f g=$g h=$h i=$i k=$k r=$r)"
+  }
+
+  var env  = Env("Unset", false, false, false, 99, 0.0)
+  var jobs = new mutable.Queue[(Env, String)]
+  val Options = List (
+     Flag("-help",    { Usage },            "prints usage text")
+   , PathArg("-f",    { arg => env.f=arg }, "«path» sets f to «path»")
+   , Flag("-h",       { env.h = true },     "sets h")
+   , Flag("-i",       { env.i = true},      "sets i" )
+   , Flag("'+h",      { env.h = false},     "clears h")
+   , Flag("'+i",      { env.i = false},     "clears i")
+   , Int32("-k",      { arg => env.k=arg }, "«int» sets k")
+   , Int32("--k=",    { arg => env.k=arg }, "«int» sets k")
+   , Real("-r",       { _ => env.r }, "«real» sets r")
+   , Path("[^-].*",   { f => jobs.enqueue((env.copy(), f)) },
+                               "adds a path to the list to be processed",
+                               "«path»")
+   , Rest("--", (args =>
+      for (f <- args) jobs.enqueue((env, f))),
+          "interprets all subsequent arguments as paths")
+   )
+   val Command = "AppTest"
+
+   def Main: Unit =
+       for ((env, path) <- jobs) Console.println(s"$path in $env")
+
+}
+}}}
+  */
 abstract class App
 { import App._
 

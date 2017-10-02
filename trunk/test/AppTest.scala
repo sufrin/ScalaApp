@@ -41,17 +41,17 @@ object AppTest extends App {
   var jobs = new mutable.Queue[(Env, String)]
   val Options = List (
      Flag("-help",    { Usage },            "prints usage text")
-   , PathArg("-f",    { arg => env.f=arg }, "<path> sets f to <path>")
+   , PathArg("-f",    { arg => env.f=arg }, "«path» sets f to «path»")
    , Flag("-h",       { env.h = true },     "sets h")
    , Flag("-i",       { env.i = true},      "sets i" )
    , Flag("'+h",      { env.h = false},     "clears h")
    , Flag("'+i",      { env.i = false},     "clears i")
-   , Int32("-k",      { arg => env.k=arg }, "<int> sets k")
-   , Int32("--k=",    { arg => env.k=arg }, "<int> sets k")
-   , Real("-r",       { _ => env.r }, "<real> sets r")
+   , Int32("-k",      { arg => env.k=arg }, "«int» sets k")
+   , Int32("--k=",    { arg => env.k=arg }, "«int» sets k")
+   , Real("-r",       { _ => env.r }, "«real» sets r")
    , Path("[^-].*",   { f => jobs.enqueue((env.copy(), f)) },
                                "adds a path to the list to be processed",
-                               "<path>")
+                               "«path»")
    , Rest("--", (args =>
       for (f <- args) jobs.enqueue((env, f))),
           "interprets all subsequent arguments as paths")
