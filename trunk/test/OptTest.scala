@@ -43,6 +43,7 @@ object OptTest extends App {
      OPT("-h",     env.h ,      "inverts h")                                    ,
      OPT("-i",     env.i ,      "inverts i")                                    ,
      OPT("-k",     env.k ,      "<int> sets k")                                 ,
+     OPT("--k=",   env.k ,      "<int> sets k")                                 ,
      OPT("-r",     env.r,       "<real> sets r")                                ,
      ELSE("<path>",   { f => jobs.enqueue((env.copy(), f)) }, 
                         "adds a path to the list to be processed")              ,

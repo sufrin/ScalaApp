@@ -47,8 +47,9 @@ object AppTest extends App {
    , Flag("'+h",      { env.h = false},     "clears h")
    , Flag("'+i",      { env.i = false},     "clears i")
    , Int32("-k",      { arg => env.k=arg }, "<int> sets k")
-   , Real("-r", { _ => env.r }, "<real> sets r")
-   , Path("[^-]. ",   { f => jobs.enqueue((env.copy(), f)) },
+   , Int32("--k=",    { arg => env.k=arg }, "<int> sets k")
+   , Real("-r",       { _ => env.r }, "<real> sets r")
+   , Path("[^-].*",   { f => jobs.enqueue((env.copy(), f)) },
                                "adds a path to the list to be processed",
                                "<path>")
    , Rest("--", (args =>

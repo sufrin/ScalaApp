@@ -30,7 +30,13 @@ package ox.app
         arguments (including `arg1` and passing them to the
         meaning function. Then `arity` arguments are removed from
         the list, and the parsing continues. The parsing stops when
-        there are no arguments left (or when a parsing error occurs).        
+        there are no arguments left (or when a parsing error occurs).
+
+        If the pattern starts with "'" then it is interpreted (without the "'")
+        as a literal. If the pattern ends with "=" then it is also interpreted as a literal, except
+        that it matches a command line argument that it prefixes, and the remainder
+        of that argument (after the "=") is treated as if it had been given as
+        an additional argument.
 
         <p>
         See `AppTest.scala` for a simple and effective way of
@@ -67,9 +73,10 @@ abstract class App
   def main(args: List[String]):  Unit = 
   { var remaining = args
     while (remaining.nonEmpty)
-    { val arg = remaining.head
-      Options.find((cmd => arg.matches(cmd.pat))) match
-      { case Some(cmd: Opt) => 
+    { val arg: String = remaining.head
+      Options.find({cmd => { if (cmd.setPat) arg.startsWith(cmd.pat) else arg.matches(cmd.pat)}}) match
+      { case Some(cmd: Opt) =>
+          if (cmd.setPat) { remaining = List(remaining.head, arg.substring(cmd.pat.length)) ++ remaining.tail } else {}
           if (cmd.arity<0)
           {
             cmd.meaning(remaining)
@@ -143,7 +150,7 @@ abstract class App
   def Usage(): Unit =
   { Console.err.println("Usage: %s [args] -- where an [arg] is one of:".format(Command))
     //noinspection ScalaMalformedFormatString
-    for (cmd<- Options) Console.err.println(s"%${flagLength}s %s".format(cmd.flag, cmd.help))
+    for (cmd<- Options) Console.err.println(s"%${flagLength}s%s".format(cmd.flag, cmd.help))
   }
   
 }
@@ -155,7 +162,8 @@ object App
         Root class of option syntax descriptors.
 */
 abstract class Opt(_pat: String, _help: Seq[String])
-{ /**
+{ override def toString: String = s"${_pat} => $pat"
+  /**
     The intended effect of a sequence of arguments that starts with 
     a string that matches `pat`.
   */
@@ -168,6 +176,10 @@ abstract class Opt(_pat: String, _help: Seq[String])
   val arity:   Int
   private
   val litPat = _pat.startsWith("'")
+
+  /** The option's arity is 1, but the argument is attached to the flag */
+  val setPat = _pat.endsWith("=")
+
   /**
     The pattern that is matched against the starting argument
     of a sequence. If `_pat` started with a single quote mark ('),
@@ -189,11 +201,12 @@ abstract class Opt(_pat: String, _help: Seq[String])
      error-message methods. The same as `pat` unless `pat` is
      to be taken literally because `_pat` started with a (').
   */
-  lazy val flag: String = _help.length match
-                  { case 0 => if (litPat) _pat.substring(1) else pat
-                    case 1 => if (litPat) _pat.substring(1) else pat
-                    case 2 => _help.last
-                  }
+  lazy val flag: String =
+  ( _help.length match
+    { case 0 => if (litPat) _pat.substring(1) else pat
+      case 1 => if (litPat) _pat.substring(1) else pat
+      case 2 => _help.last
+    }) ++ (if (setPat) "" else " ")
   /**
         Throws an `OptFail` exception to the option parser if
         `arg` doesn't match `pat`. 
