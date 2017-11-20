@@ -61,7 +61,7 @@ package ox.app
    var r: Double
   )
   {
-   override def toString = s"(f=$f g=$g h=$h i=$i k=$k r=$r)"
+   override def toString = s"(f=\$f g=\$g h=\$h i=\$i k=\$k r=\$r)"
   }
 
   var env  = Env("Unset", false, false, false, 99, 0.0)
@@ -86,7 +86,7 @@ package ox.app
    val Command = "AppTest"
 
    def Main: Unit =
-       for ((env, path) <- jobs) Console.println(s"$path in $env")
+       for ((env, path) <- jobs) Console.println(s"\$path in \$env")
 
 }
 }}}
